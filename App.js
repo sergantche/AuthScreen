@@ -8,17 +8,50 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
 } from 'react-native';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 // Constants
 const correctPassword = '1234';
+const menuItems = [
+  ['home', 'Главная'],
+  ['search1', 'Поиск'],
+  ['shoppingcart', 'Корзина'],
+  ['user', 'Профиль'],
+  ['ellipsis1', 'Еще'],
+];
 
-const Footer = props => {
-  return (
-    <View style={styles.footer}>
-      <Text>Footer</Text>
-    </View>
-  );
-};
+class Footer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeSection: 3,
+    };
+  }
+
+  render() {
+    return (
+      <View style={styles.footer}>
+        {menuItems.map((item, index) => {
+          const color = this.state.activeSection == index ? '#01c0ad' : 'gray';
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.footerItem}
+              onPress={() => {
+                this.setState({activeSection: index});
+              }}>
+              <IconAntDesign
+                color={color}
+                name={item[0]}
+                size={30}></IconAntDesign>
+              <Text style={[styles.footerText, {color}]}>{item[1]}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
+}
 
 export default class AuthScreen extends React.Component {
   constructor(props) {
@@ -181,8 +214,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer: {
-    backgroundColor: 'pink',
+    backgroundColor: '#fcfcfc',
     width: '100%',
     height: 70,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: '#f5f5f5',
+  },
+  footerItem: {
+    width: '19%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerText: {
+    fontFamily: 'sans-serif',
+    fontSize: 14,
   },
 });
