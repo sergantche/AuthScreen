@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 
 // Constants
 const correctPassword = '1234';
@@ -20,6 +22,34 @@ const menuItems = [
   ['ellipsis1', 'Еще'],
 ];
 
+// Convert phone string to decorated one
+const convertPhoneNumber = phone => {
+  const res = Array.from(phone).map((value, index) => {
+    if (!(value >= '0' && value <= '9')) return '';
+    switch (index) {
+      case 0:
+        return `+${value}`;
+      case 1:
+        return ` (${value}`;
+      case 4:
+        return `) ${value}`;
+      case 7:
+        return `-${value}`;
+      case 9:
+        return `-${value}`;
+      default:
+        return value;
+    }
+  });
+  return res.join('');
+};
+
+// Convert phone number back
+const convertPhoneNumberBack = phone => {
+  return phone.replace(/[ +()-]/g, '');
+};
+
+// Footer menu
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -53,6 +83,7 @@ class Footer extends React.Component {
   }
 }
 
+// Screen with authentication logic
 export default class AuthScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -74,6 +105,11 @@ export default class AuthScreen extends React.Component {
     }
   };
 
+  // Show/hide password input value
+  showHidePassword = () => {
+    this.setState({showPassword: !this.state.showPassword});
+  };
+
   // Callback for 'Forget password' button
   forgetPassword = () => {
     console.log('Forget password button was pushed');
@@ -85,6 +121,7 @@ export default class AuthScreen extends React.Component {
   };
 
   render() {
+    const eyeIcon = this.state.showPassword ? 'ios-eye' : 'ios-eye-off';
     return (
       <View style={styles.mainContainer}>
         <KeyboardAvoidingView behavior="height" style={styles.container}>
@@ -96,17 +133,30 @@ export default class AuthScreen extends React.Component {
               <Text style={styles.inputTitle}>{'Телефон *'}</Text>
               <TextInput
                 style={styles.input}
-                value={this.state.password}
-                onChangeText={phone => this.setState({phone})}
+                keyboardType="numeric"
+                maxLength={18}
+                value={convertPhoneNumber(this.state.phone)}
+                onChangeText={value =>
+                  this.setState({phone: convertPhoneNumberBack(value)})
+                }
               />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputTitle}>{'Пароль *'}</Text>
-              <TextInput
-                style={styles.input}
-                value={this.state.password}
-                onChangeText={password => this.setState({password})}
-              />
+              <View style={styles.input}>
+                <TextInput
+                  style={{flex: 1}}
+                  maxLength={12}
+                  value={this.state.password}
+                  onChangeText={password => this.setState({password})}
+                />
+                <TouchableOpacity onPress={this.showHidePassword}>
+                  <IconIonicons
+                    name={eyeIcon}
+                    size={30}
+                    style={styles.eyeIcon}></IconIonicons>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* 'ENTER' AND 'FORGET PASSWORD' BUTTONS */}
@@ -147,11 +197,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    paddingTop: 15,
   },
   container: {
-    flex: 1,
+    height: Dimensions.get('window').height - 70,
     paddingHorizontal: 15,
+    paddingTop: 15,
   },
   title: {
     fontFamily: 'sans-serif-medium',
@@ -166,6 +216,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#dedede',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    fontFamily: 'sans-serif',
+    fontSize: 20,
   },
   inputTitle: {
     fontFamily: 'sans-serif-light',
@@ -178,6 +233,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     paddingHorizontal: 5,
+  },
+  eyeIcon: {
+    marginHorizontal: 15,
+    color: 'gray',
   },
   enterBtn: {
     height: 60,
@@ -223,7 +282,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#f5f5f5',
   },
   footerItem: {
-    width: '19%',
+    width: `${100 / menuItems.length - 1}%`,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
