@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
+import Modal from 'react-native-modal';
 
 // Constants
 const correctPassword = '1234';
@@ -105,6 +106,11 @@ export default class AuthScreen extends React.Component {
     }
   };
 
+  // Close modal window by swiping it or pressing back button
+  closeModalWindow = () => {
+    this.setState({showModalWindow: false, authSuccess: false});
+  };
+
   // Show/hide password input value
   showHidePassword = () => {
     this.setState({showPassword: !this.state.showPassword});
@@ -121,9 +127,33 @@ export default class AuthScreen extends React.Component {
   };
 
   render() {
-    const eyeIcon = this.state.showPassword ? 'ios-eye' : 'ios-eye-off';
+    const {authSuccess, showPassword, showModalWindow} = this.state;
+    const eyeIcon = showPassword ? 'ios-eye' : 'ios-eye-off';
+    const modalTitleColor = authSuccess ? '#01c0ad' : '#911f4c';
+    const modalTitleText = authSuccess ? 'Success' : 'Failure';
     return (
       <View style={styles.mainContainer}>
+        {/* MODAL WINDOW WITH AUTH RESULT */}
+        <Modal
+          onBackButtonPress={() => {
+            this.closeModalWindow();
+            return true;
+          }}
+          style={styles.modal}
+          isVisible={showModalWindow}
+          swipeDirection={['up', 'left', 'right', 'down']}
+          onSwipeComplete={this.closeModalWindow}>
+          <View style={styles.modalInner}>
+            <View style={styles.modalTitle}>
+              <Text style={[styles.modalTitleText, {color: modalTitleColor}]}>
+                {modalTitleText}
+              </Text>
+            </View>
+            <Text style={styles.modalSwipeText}>{'Swipe to close'}</Text>
+          </View>
+        </Modal>
+
+        {/* MAIN SCREEN AREA  */}
         <KeyboardAvoidingView behavior="height" style={styles.container}>
           <ScrollView>
             <Text style={styles.title}>{'Вход'}</Text>
@@ -149,7 +179,7 @@ export default class AuthScreen extends React.Component {
                 <TextInput
                   style={styles.input}
                   maxLength={12}
-                  secureTextEntry={!this.state.showPassword}
+                  secureTextEntry={!showPassword}
                   value={this.state.password}
                   onChangeText={password => this.setState({password})}
                 />
@@ -189,6 +219,8 @@ export default class AuthScreen extends React.Component {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+
+        {/* FOOTER MENU */}
         <Footer />
       </View>
     );
@@ -198,7 +230,7 @@ export default class AuthScreen extends React.Component {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     backgroundColor: 'white',
   },
   container: {
@@ -296,5 +328,32 @@ const styles = StyleSheet.create({
   footerText: {
     fontFamily: 'sans-serif',
     fontSize: 14,
+  },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalInner: {
+    height: 140,
+    width: 200,
+    backgroundColor: 'white',
+    borderRadius: 5,
+  },
+  modalTitle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 20,
+  },
+  modalTitleText: {
+    fontFamily: 'sans-serif',
+    fontSize: 24,
+  },
+  modalSwipeText: {
+    alignSelf: 'center',
+    fontFamily: 'sans-serif',
+    fontSize: 14,
+    color: 'gray',
+    marginBottom: 8,
   },
 });
