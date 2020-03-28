@@ -129,24 +129,27 @@ export default class AuthScreen extends React.Component {
             <Text style={styles.title}>{'Вход'}</Text>
 
             {/* AUTH FORM */}
-            <View style={styles.inputContainer}>
+            <View style={styles.inputBlock}>
               <Text style={styles.inputTitle}>{'Телефон *'}</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                maxLength={18}
-                value={convertPhoneNumber(this.state.phone)}
-                onChangeText={value =>
-                  this.setState({phone: convertPhoneNumberBack(value)})
-                }
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputTitle}>{'Пароль *'}</Text>
-              <View style={styles.input}>
+              <View style={styles.inputContainer}>
                 <TextInput
-                  style={{flex: 1}}
+                  style={styles.input}
+                  keyboardType="numeric"
+                  maxLength={18}
+                  value={convertPhoneNumber(this.state.phone)}
+                  onChangeText={value =>
+                    this.setState({phone: convertPhoneNumberBack(value)})
+                  }
+                />
+              </View>
+            </View>
+            <View style={styles.inputBlock}>
+              <Text style={styles.inputTitle}>{'Пароль *'}</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
                   maxLength={12}
+                  secureTextEntry={!this.state.showPassword}
                   value={this.state.password}
                   onChangeText={password => this.setState({password})}
                 />
@@ -208,19 +211,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginVertical: 10,
   },
-  inputContainer: {
+  inputBlock: {
     marginVertical: 20,
-  },
-  input: {
-    height: 60,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#dedede',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    fontFamily: 'sans-serif',
-    fontSize: 20,
   },
   inputTitle: {
     fontFamily: 'sans-serif-light',
@@ -233,6 +225,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     paddingHorizontal: 5,
+  },
+  inputContainer: {
+    height: 60,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#dedede',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 15,
+    fontFamily: 'sans-serif',
+    fontSize: 20,
   },
   eyeIcon: {
     marginHorizontal: 15,
